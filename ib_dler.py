@@ -14,7 +14,9 @@ def main():
     od = sys.argv[2]
     if not od.endswith('/'):
         od += '/'
-    print('Using ' + url)
+    print('Using URL: ' + url)
+    print('Using Output Dir: ' + od)
+    print()
 
     # send GET to URL
     try:
@@ -34,20 +36,23 @@ def main():
     extp = '^.*(' + '|'.join(exts) + ')$'
     for i in ilr:
         # Clean anchor hrefs
-        if not i.startswith("http") and not i.startswith("https"):
-            if i.startswith("//"):
+        if not i.startswith('http') and not i.startswith('https'):
+            if i.startswith('//'):
                 i = 'http:' + i
-        print(extp + " " + i)
+            elif not i.startswith('/'):
+                    i = re.search('^.+/', url).group(0) + i
+        # Check extension
         if re.match(extp, i):
             if not ilp.__contains__(i):
                 ilp.append(i)
 
-    # Loop i URLs, GET, and per1sext2ist
+    # Loop URLs, GET, and persist
     n = 0
     for i in ilp:
         try:
-            urllib.request.urlretrieve(i, od + re.search('[0-9]+\..+$', i).group(0))
-            print('Retrieved: ' + i)
+            name = od + re.search('(?=\w+\.\w{3,4}$).+', i).group(0)
+            urllib.request.urlretrieve(i, name)
+            print('Retrieved ' + i + ' as ' + name)
         except Exception as e:
             raise Exception('Error occured during target retrieval: '\
             + type(e).__name__ + ': ' + str(e))
@@ -64,8 +69,8 @@ if __name__ == '__main__':
 ibdl [OPTION] URL OUTPUTDIR
     The default action is to identify every anchor found at URL whose reference contains an
     image extension type, and download it to OUTPUTDIR.
-    -e      Extension list in the form of ext1,ext2...
-    -h      Show request headers""")
+    -e      [TODO] Extension list in the form of ext1,ext2...
+    -h      [TODO] Show request headers""")
         else:
             main()
     except Exception as e:
