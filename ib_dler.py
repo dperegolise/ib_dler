@@ -18,7 +18,10 @@ def main():
 
     # send GET to URL
     try:
-        response = urllib.request.urlopen(url).read()
+        r = urllib.request.urlopen(url)
+        response = r.read()
+        print(r.info())
+        print("URL Fetched: " + url)
     except Exception as e:
         raise Exception('Error occured during initial request: ' \
             + type(e).__name__ + ': ' + str(e))
@@ -28,16 +31,31 @@ def main():
     p = re.compile('<a.*?href=[\'|"](.*?)[\'"]')
     ilr = p.findall(str(response))
     exts = ['jpg', 'jpeg', 'png', 'gif']
+    extp = '^.*(' + '|'.join(exts) + ')$'
     for i in ilr:
-        if exts.__contains__(re.search('\.*{3-4}$', i).group(0):
-            if not ilp.__contains__('http:' + i):
-                ilp.append('http:' + i)
+        # Clean anchor hrefs
+        if not i.startswith("http") and not i.startswith("https"):
+            if i.startswith("//"):
+                i = 'http:' + i
+        print(extp + " " + i)
+        if re.match(extp, i):
+            if not ilp.__contains__(i):
+                ilp.append(i)
 
     # Loop i URLs, GET, and per1sext2ist
     n = 0
     for i in ilp:
-        urllib.request.urlretrieve(i, od + re.search('[0-9]+\..+$', i).group(0))
-        n += 1
+        try:
+            urllib.request.urlretrieve(i, od + re.search('[0-9]+\..+$', i).group(0))
+            print('Retrieved: ' + i)
+        except Exception as e:
+            raise Exception('Error occured during target retrieval: '\
+            + type(e).__name__ + ': ' + str(e))
+        finally:
+            n += 1
+
+
+
 
 if __name__ == '__main__':
     try:
@@ -46,7 +64,8 @@ if __name__ == '__main__':
 ibdl [OPTION] URL OUTPUTDIR
     The default action is to identify every anchor found at URL whose reference contains an
     image extension type, and download it to OUTPUTDIR.
-    -e      Extension list in the form of ext1,ext2...""")
+    -e      Extension list in the form of ext1,ext2...
+    -h      Show request headers""")
         else:
             main()
     except Exception as e:
