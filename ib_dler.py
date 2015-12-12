@@ -10,8 +10,7 @@ def main():
         raise Exception('URL and output dir arguments are required.')
 
     # Grab arguments from sysv
-    url = sys.argv[1]
-    od = sys.argv[2]
+    url, od = sys.argv[1], sys.argv[2]
     if not od.endswith('/'):
         od += '/'
     print('Using URL: ' + url)
