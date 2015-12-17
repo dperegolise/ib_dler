@@ -1,10 +1,10 @@
 from exceptions import ArgumentException
+from messages import *
 
 # Utility methods
 
 def validate_args(argv):
-    # No args is valid as help message
-    if len(argv) == 1 or argv[1] == '--help':
+    if len(argv) == 1 or argv[1] == '--help': # No args is valid as help message
         pass
-    elif len(argv) < 3:
-        raise ArgumentException('URL and output dir arguments are required.')
+    elif len(argv) < 3:						  # Otherwise, two required
+        raise ArgumentException(error.args_required)

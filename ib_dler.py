@@ -8,19 +8,12 @@ contains an image extension type, and download it to OUTPUTDIR.
 import re
 import sys
 
+from urllib.error import *
 import urllib.request
 
 from exceptions import *
 from messages import *
 import utilities
-
-try:
-    main()
-except ArgumentException as ae:
-    print(str(ae) + '\n\n')
-    info.help()
-except Exception as e:
-    raise e
 
 def main():
     ''' Main function, where all the fun happens'''
@@ -39,9 +32,8 @@ def main():
         r = urllib.request.urlopen(url)
         response = r.read()
         info.headers(r, url)
-    except Exception as e:
-        raise Exception('Error occured during initial request: ' \
-            + type(e).__name__ + ': ' + str(e))
+    except (HTTPError, URLError) as e:
+        raise InitialRequestException(e, type(e).__name__)
 
     # Parse response, find anchors, filter to imgs
     ilp = []
@@ -73,3 +65,13 @@ def main():
             + type(e).__name__ + ': ' + str(e))
         finally:
             n += 1
+
+try:
+    main()
+except ArgumentException as ae:
+    print(str(ae) + '\n\n')
+    info.help()
+except InitialRequestException as ie:
+    print(ie.message)
+except Exception as e:
+    raise e

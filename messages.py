@@ -1,21 +1,33 @@
 # Resource container classes
 
-
 class info:
-    # Help Prompt
-    def help():
-        print("""Image Board Downloader (Fri Dec 11 21:52:52 EST 2015)
+	# Help Prompt
+    h = """Image Board Downloader (Fri Dec 11 21:52:52 EST 2015)
     ibdl [OPTION] URL OUTPUTDIR
-    The default action is to identify every anchor found at URL whose reference contains an
-    image extension type, and download it to OUTPUTDIR.
+    The default action is to identify every anchor found at URL whose reference
+    contains an image extension type, and download it to OUTPUTDIR.
     -e      [TODO] Extension list in the form of ext1,ext2...
     -h      [TODO] Show response headers
-    -b      [TODO] Show response body""")
+    -b      [TODO] Show response body"""
 
     # Argument info
-    def environment(url, od) :
-        print('Using URL: ' + url + '\nUsing Output Dir: ' + od + '\n')
+    e = 'Using URL: {}\nUsing Output Dir: {}\n'
 
     # HTTP headers
+    hd = '{}\n' + 'URL Fetched: {}'
+
+    def help():
+        print(info.h)
+
+    def environment(url, od) :
+        print(info.e.format(url, od))
+
     def headers(r, url):
-        print(str(r.info()) + '\n' + 'URL Fetched: ' + url)
+        print(info.hd.format(str(r.info()), url))
+
+class error:
+	# Missing arguments
+    args_required = 'URL and output dir arguments are required.'
+
+    # Initial request error
+    init_req = 'Error occured during initial request: '
