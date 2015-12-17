@@ -1,28 +1,44 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Image Board Downloader
+ibdl [OPTION] URL OUTPUTDIR
+The default action is to identify every anchor found at URL whose reference
+contains an image extension type, and download it to OUTPUTDIR.
+"""
 import re
 import sys
+
 import urllib.request
 
-import messages
 from exceptions import *
+from messages import *
+import utilities
+
+try:
+    main()
+except ArgumentException as ae:
+    print(str(ae) + '\n\n')
+    info.help()
+except Exception as e:
+    raise e
 
 def main():
     ''' Main function, where all the fun happens'''
 
     # Check for human error
-    if len(sys.argv) < 3:
-        raise ArgumentException('URL and output dir arguments are required.')
+    utilities.validate_args(sys.argv)
 
     # Grab arguments from sysv
     url, od = sys.argv[1], sys.argv[2]
     if not od.endswith('/'):
         od += '/'
-    messages.ECHOENV(url, od)
+    info.environment(url, od)
 
     # send GET to URL
     try:
         r = urllib.request.urlopen(url)
         response = r.read()
-        messages.HEADERS(r, url)
+        info.headers(r, url)
     except Exception as e:
         raise Exception('Error occured during initial request: ' \
             + type(e).__name__ + ': ' + str(e))
@@ -57,16 +73,3 @@ def main():
             + type(e).__name__ + ': ' + str(e))
         finally:
             n += 1
-
-
-if __name__ == '__main__':
-    try:
-        if len(sys.argv) == 1 or sys.argv[1] == '--help':
-            messages.HELP()
-        else:
-            main()
-    except ArgumentException as ae:
-        print(str(ae) + '\n\n')
-        messages.HELP()
-    except Exception as e:
-        print(str(e))
