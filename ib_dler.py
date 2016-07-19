@@ -15,6 +15,9 @@ from exceptions import *
 from messages import *
 import utilities
 
+# Declare constants
+EXTS = ['jpg', 'jpeg', 'png', 'gif']
+
 def main():
     ''' Main function, where all the fun happens'''
 
@@ -29,18 +32,21 @@ def main():
 
     # send GET to URL
     try:
-        r = urllib.request.urlopen(url)
-        response = r.read()
+        # Fake user agent
+        headers = {'user-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) '\
+		'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 '\
+		'Safari/537.36'}
+        req = urllib.request.Request(url, None, headers)
+        r = urllib.request.urlopen(req)
+        html = r.read()
         info.headers(r, url)
     except (HTTPError, URLError) as e:
         raise InitialRequestException(e, type(e).__name__)
 
     # Parse response, find anchors, filter to imgs
     ilp = []
-    p = re.compile('<a.*?href=[\'|"](.*?)[\'"]')
-    ilr = p.findall(str(response))
-    exts = ['jpg', 'jpeg', 'png', 'gif']
-    extp = '^.*(' + '|'.join(exts) + ')$'
+    ilr = re.compile('<a.*?href=[\'|"](.*?)[\'"]').findall(str(html))
+    extp = '^.*(' + '|'.join(EXTS) + ')$'
     for i in ilr:
         # Clean anchor hrefs
         if not i.startswith('http') and not i.startswith('https'):
@@ -69,7 +75,7 @@ def main():
 try:
     main()
 except ArgumentException as ae:
-    print(str(ae) + '\n\n')
+    print(str(ae))
     info.help()
 except InitialRequestException as ie:
     print(ie.message)

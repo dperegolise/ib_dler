@@ -27,7 +27,7 @@ class info:
 
 class error:
 	# Missing arguments
-    args_required = 'URL and output dir arguments are required.'
+    args_required = '\nURL and output dir arguments are required.\n'
 
     # Initial request error
     init_req = 'Error occured during initial request: '
