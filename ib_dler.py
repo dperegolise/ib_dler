@@ -16,7 +16,7 @@ from messages import *
 import utilities
 
 # Declare constants
-EXTS = ['jpg', 'jpeg', 'png', 'gif']
+EXTS = ['jpg', 'jpeg', 'png', 'gif', 'webm']
 
 def main():
     ''' Main function, where all the fun happens'''
